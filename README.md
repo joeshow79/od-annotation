@@ -34,14 +34,14 @@ SAMPLE_FILE_PATH = 'your samples directory path'  # 样本图片存放目录
 4. 启动/停止/重启标注工具：
 ```buildoutcfg
 $ cd od-annotation
-$ python3 app.py --start|stop|restart
+$ python3 app_wa.py --start|stop|restart
 ```
 5. 访问`http://localhost:5000`开始标注。先选定待标注类别，然后按住鼠标左键并拖拽鼠标在目标区域绘制矩形框进行标注，松开鼠标完成标注。可拖动矩形框以修正坐标，右击某矩形框可取消该标注。每次新绘制矩形框、拖动已有矩形框或右击取消矩形框时，会在下方的`当前样本标注状态`文本框中同步更新该样本的标注结果。
 6. 点击左右方向按钮或通过键盘方向键切换标注样本。切换时自动提交标注结果，同时在`所有样本标注状态`文本框中更新当前样本的标注结果。或手动点击`保存`按钮提交标注结果。
 7. 所有样本标注完成后，若需要转换成VOC2007格式，执行：
 ```buildoutcfg
 $ cd od-annotation
-$ python3 app.py --convert2voc
+$ python3 app_wa.py --convert2voc
 ```
 查看`annotation/VOC2007`目录下相关文件夹是否生成对应文件
 

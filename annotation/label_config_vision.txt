@@ -1,0 +1,12 @@
+# name: description
+nolabel:未标注
+beach:沙滩
+blue_sky:蓝天
+cat:猫
+dog:狗
+flower:花
+food:食物
+night:夜景
+plant:绿植
+text:文本
+other:其他
