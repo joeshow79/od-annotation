@@ -6,12 +6,20 @@ $(function(){
     $('#total').text(sampleCount);
     loadSamplePic();
     $('#side_left').click(function(){
-        $('#btn_save').click();
-        loadSamplePic();
+        //$('#btn_save').click();
+        //loadSamplePic();
     });
     $('#side_right').click(function(){
-        $('#btn_save').click();
-        loadSamplePic();
+		strTagSelection= $("input[name='radio_region']:checked").val();
+        if (strTagSelection == 'nolabel' || strTagSelection == ''){
+            layer.msg('请先进行标注!');
+            return;
+        }
+		else{
+			$('#btn_save').click();
+
+			loadSamplePic();
+		}
     });
     $(document).keyup(function(event){
       if (event.keyCode === 37){//left
@@ -75,7 +83,7 @@ function get_labels(){
 	});
 }
 
-function loadSamplePic(index){
+function loadSamplePic(){
     $.ajax({
 		type : "GET",
 		dataType : "json",
@@ -85,16 +93,19 @@ function loadSamplePic(index){
 		success : function(result){
 			img_name = result['img_name'];
 			sample_count=result['sample_count'];
+			if (img_name.replace(/(^\s*)|(\s*$)/g, "").length ==0){
+				layer.msg('没有更多图像!');
+			}
+			else{
 			url = "/api/annotation/sample?time="+Date.parse(new Date())+"&img_name="+img_name ;
 			$('#img').attr({"src":url});
 			$('#total').html(sample_count);
 			$('#cur_id').html(img_name);
 			$('.box').remove();
 			$('#cur_loc').html('');
+			}
 		
 			//Resume to initial label status
-			//$("input[name='radio_region'][value='nolabel']").attr("checked", true); 
-			//$("input[name='radio_region']:eq(0)").attr("checked",'checked');
 			$("input[name='radio_region']").eq(0).prop("checked",true);
 
 		},

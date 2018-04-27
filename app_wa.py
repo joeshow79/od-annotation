@@ -57,18 +57,22 @@ def get_labels():
 # 读取标注样本
 @app.route('/api/annotation/next', methods=['GET'])
 def get_next():
+    print("next...\n")
     img_name=""
     sample_count=mongo.db[sys_config.PROJECT_NAME].find({'status': -1}).count()
 
     #random selection
-    #if sample_count > 10:
-#        cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1}).limit(10)
-#        cursor.skip(random.randint(0,9))
-#        if cursor.next():
-#            img_name = cursor['_id']
-
-    for sample_to_label in mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1}).limit(1):
+    if sample_count > 10:
+        cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1}).limit(10)
+        cursor.skip(random.randint(0,9))
+        sample_to_label = next(cursor, None)
         img_name = sample_to_label['_id']
+    else:
+        for sample_to_label in mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1}).limit(1):
+            img_name = sample_to_label['_id']
+
+    print(img_name)
+
     result = dict()
     result['img_name'] = img_name
     result['sample_count'] = sample_count 
@@ -77,21 +81,19 @@ def get_next():
 # 读取标注样本
 @app.route('/api/annotation/sample', methods=['GET'])
 def get_sample():
-        if 'img_name' in request.args:
-            img_name = request.args['img_name'] 
-#        if 'index' in request.args:
-#            index=request.args['index']
-#            if index == '1' :
-#                for sample_to_label in mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1}).limit(1):
-#                    img_name = sample_to_label['_id']
+    if 'img_name' in request.args:
+        img_name = request.args['img_name'] 
 
-        if img_name:
-            logger.debug('Processing:' + str(img_name))
-            return send_file(img_name, mimetype='application/octet-stream', as_attachment=True, attachment_filename=img_name)
-        else:
-            result = dict()
-            result['message'] = 'failure'
-            return jsonify(result)
+    print("sample....\n")
+    print(img_name)
+
+    if img_name:
+        logger.debug('Processing:' + str(img_name))
+        return send_file(img_name, mimetype='application/octet-stream', as_attachment=True, attachment_filename=img_name)
+    else:
+        result = dict()
+        result['message'] = 'failure'
+        return jsonify(result)
 
 
 # 标注接口
@@ -100,6 +102,8 @@ def save_annotation():
     img_name = request.form['img_name'] 
     tags = request.form['tags']
 
+    print("save....\n")
+    print(img_name)
     try:
         if mu.acquire(True):
             mongo.db[sys_config.PROJECT_NAME].save({"_id": img_name, 
@@ -141,7 +145,7 @@ if __name__ == '__main__':
     parser.add_argument('--start', action='store_true', help='running background')
     parser.add_argument('--stop', action='store_true', help='shutdown process')
     parser.add_argument('--restart', action='store_true', help='restart process')
-    parser.add_argument('--convert2voc', action='store_true', help='restart process')
+    #parser.add_argument('--convert2voc', action='store_true', help='restart process')
 
     FLAGS = parser.parse_args()
     if FLAGS.start:
@@ -151,5 +155,5 @@ if __name__ == '__main__':
     elif FLAGS.restart:
         tool.shutdown_service(sys_config.PID_FILE)
         tool.start_service(run, sys_config.PID_FILE)
-    elif FLAGS.convert2voc:
-        tool.convert_to_voc2007()
+    #elif FLAGS.convert2voc:
+        #tool.convert_to_voc2007()
