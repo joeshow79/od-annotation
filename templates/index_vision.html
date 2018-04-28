@@ -20,9 +20,32 @@
 </head>
 <body>
 <div class="container-fluid">
+	<!-- HEADER AND LOGO -->
+  <div class="header" id="header">
+		<!-- LOGO-->
+		<div id="logo">
+			<img id="logo"  src="../static/images/westalgo.png" style="height:30px"/>
+		</div>
+
+		<!-- USERNAME FORM-->
+		<div id="username_main_div">
+		<div id="display_user" style="display:block;">
+			You are:
+			<b><span id="usernametxt" type="text" style="max-width:120px; height:1.2em;" tabindex="0" title="username">anonymous
+			</span></b>
+			<font size="-2">(<a href="#" id="changeuser" title="Click to change the username">change user</a>)</font>
+		</div>
+		<div id="enterUserName" style="display:none;">
+			Enter name:
+			<input id="userEnter" type="text" style="width:120px;" tabindex="0" value="" title="Enter the name." />
+		</div>
+		</div>
+  </div>
+
+  <div id="workspace">
     <div class="row" style="text-align:center">
         <div class="col-md-1 img-side">
-			<img id="logo"  src="../static/images/westalgo.png" style="height:30px"/>
+			<!-- img id="logo"  src="../static/images/westalgo.png" style="height:30px"/-->
             <button sytle="display:none" class="btn btn-default btn-lg" id="side_left" type="button" value="left"><span
                     class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
         </div>
@@ -30,7 +53,8 @@
         <div class="col-md-10 img-main" id="img">&nbsp;</div>
 		-->
         <div class="col-md-10 img-main" >
-			<img id="img" style="height: 600px;max-width:800px" />
+			<img id="img" style="max-height:480px" />
+			<!--img id="img" style="max-height:360;max-width:640" /-->
 		</div>
 		<!--
 		<input type="hidden" id="img_name" value="{{img_name}}"/>
@@ -82,6 +106,7 @@
         </div>
     </div>
 	-->
+  </div>
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -97,6 +122,7 @@
   var sample_count = "";
   var img_name= "";
   var previous_img_name = "";
+  var user_name="";
 </script>
 </body>
 </html>

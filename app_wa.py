@@ -122,13 +122,17 @@ def get_sample():
 def save_annotation():
     img_name = request.form['img_name'] 
     task_name = request.form['task_name'] 
+    user_name = request.form['user_name'] 
     tags = request.form['tags']
 
     category=""
     sub_category=""
     values = tags.strip().split('-')
-    category= values[0].strip()
-    sub_category= values[1].strip()
+    if len(values) > 1 :
+        category= values[0].strip()
+        sub_category= values[1].strip()
+    else:
+        category= tags.strip()
 
     print("save....\n")
     print(img_name)
@@ -138,7 +142,7 @@ def save_annotation():
             mongo.db[task_name].save({"_id": img_name, 
                        "category": category, 
                        "sub_category": sub_category,
-                       "owner": "",
+                       "owner": user_name,
                        "status": 1,
                        "finished_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
             mu.release()
