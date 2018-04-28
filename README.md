@@ -175,3 +175,15 @@ Finds duplicate pictures that have been hashed. This will find images that have 
 ## Disclaimer
 
 I take no responsibility for bugs in this script or accidentally deleted pictures. Use at your own risk. Make sure you back up your pictures before using.
+
+
+
+----------------------------------------------------
+DOCKER 
+
+"registry-mirrors": ["https://registry.docker-cn.com"]
+
+$ docker images REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+digitalgenius/alpine-python3-pg   latest              a0b64318b251        33 hours ago        390MB
+mongo                             latest              a0f922b3f0a1        8 days ago          366MB
+
