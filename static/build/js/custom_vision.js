@@ -68,15 +68,21 @@ function get_labels(){
 		            var value = result.data[i].name;
 		            var text = result.data[i].desc;
 		            if(index==0){
+						html += '<div class="row" style="text-align:left">';
 		                html += '<label class="radio-inline"><input type="radio" name="radio_region" checked="checked" id="'+id+'" value="'+value+'">';
 		            }else{
 						if ( value == "-" ){
-							html +='<br/>
+							html+='</div>' 
+							html += '<div class="row" style="text-align:left">';
 						}
-		                html += '<label class="radio-inline"><input type="radio" name="radio_region" id="'+id+'" value="'+value+'">';
+						else{
+							html += '<label class="radio-inline"><input type="radio" name="radio_region" id="'+id+'" value="'+value+'">';
+						}
 		            }
-		            html += ' '+text+'</label>';
-		            index++;
+					if ( value != "-" ){
+						html += ' '+text+'</label>';
+						index++;
+					}
 		        }
                 $('#radio-type').html(html);
 		    }

@@ -124,14 +124,20 @@ def save_annotation():
     task_name = request.form['task_name'] 
     tags = request.form['tags']
 
+    category=""
+    sub_category=""
+    values = tags.strip().split('-')
+    category= values[0].strip()
+    sub_category= values[1].strip()
+
     print("save....\n")
     print(img_name)
     try:
         if mu.acquire(True):
             #mongo.db[sys_config.PROJECT_NAME].save({"_id": img_name, 
             mongo.db[task_name].save({"_id": img_name, 
-                       "category": tags, 
-                       "sub_category": -1,
+                       "category": category, 
+                       "sub_category": sub_category,
                        "owner": "",
                        "status": 1,
                        "finished_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
