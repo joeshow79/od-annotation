@@ -2,6 +2,7 @@
 nolabel:未标注
 beach:沙滩
 blue_sky:蓝天
+-:-
 cat:猫
 dog:狗
 flower:花

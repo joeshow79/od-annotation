@@ -9,7 +9,7 @@ import traceback
 import requests
 import datetime
 import random
-from flask import Flask, render_template, jsonify, send_file
+from flask import Flask, render_template, jsonify, send_file, redirect, url_for
 from flask import request
 from logger_manager import controller_logger as logger
 
@@ -35,7 +35,8 @@ mongo = PyMongo(app, config_prefix='MONGOWA')
 # Route to any template
 @app.route('/')
 def index():
-    return render_template('index_wa.html', \
+    #return render_template('page_404.html'), 404
+    return render_template('index_vision.html', \
                            sample_type=sys_config.SAMPLE_FILE_TYPE)
 
 
@@ -47,35 +48,55 @@ def route_template(template):
 # 读取类别标签
 @app.route('/api/annotation/labels', methods=['GET'])
 def get_labels():
-    label_json = tool.get_labels()
+    print("label...\n")
+    task_name=''
+    if 'task_name' in request.args:
+        task_name = request.args['task_name'] 
+
+    label_json = tool.get_labels(task_name)
     result = dict()
     result['message'] = 'success'
     result['data'] = label_json
     return jsonify(result)
 
+@app.route('/task/<taskname>')
+def show_user_profile(taskname):
+    return render_template('index_'+taskname+'.html', \
+                           sample_type=sys_config.SAMPLE_FILE_TYPE)
 
 # 读取标注样本
 @app.route('/api/annotation/next', methods=['GET'])
 def get_next():
     print("next...\n")
     img_name=""
-    sample_count=mongo.db[sys_config.PROJECT_NAME].find({'status': -1}).count()
+    category=""
+    task_name=""
+    if 'task_name' in request.args:
+        task_name = request.args['task_name'] 
+
+    #sample_count=mongo.db[sys_config.PROJECT_NAME].find({'status': -1}).count()
+    sample_count=mongo.db[task_name].find({'status': -1}).count()
 
     #random selection
     if sample_count > 10:
-        cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1}).limit(10)
+        #cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1,'category':1}).limit(10)
+        cursor=mongo.db[task_name].find({'status': -1},{'_id':1,'category':1}).limit(10)
         cursor.skip(random.randint(0,9))
         sample_to_label = next(cursor, None)
         img_name = sample_to_label['_id']
+        category = sample_to_label['category']
     else:
-        for sample_to_label in mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1}).limit(1):
+        #for sample_to_label in mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1,'category':1}).limit(1):
+        for sample_to_label in mongo.db[task_name].find({'status': -1},{'_id':1,'category':1}).limit(1):
             img_name = sample_to_label['_id']
+            category = sample_to_label['category']
 
     print(img_name)
 
     result = dict()
     result['img_name'] = img_name
     result['sample_count'] = sample_count 
+    result['category'] = category
     return jsonify(result)
 
 # 读取标注样本
@@ -100,13 +121,15 @@ def get_sample():
 @app.route('/api/annotation/save', methods=['POST'])
 def save_annotation():
     img_name = request.form['img_name'] 
+    task_name = request.form['task_name'] 
     tags = request.form['tags']
 
     print("save....\n")
     print(img_name)
     try:
         if mu.acquire(True):
-            mongo.db[sys_config.PROJECT_NAME].save({"_id": img_name, 
+            #mongo.db[sys_config.PROJECT_NAME].save({"_id": img_name, 
+            mongo.db[task_name].save({"_id": img_name, 
                        "category": tags, 
                        "sub_category": -1,
                        "owner": "",

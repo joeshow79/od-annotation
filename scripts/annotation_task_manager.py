@@ -26,6 +26,9 @@ Options:
         --match-time          Adds the extra constraint that duplicate images must have the
                               same capture times in order to be considered.
         --trash=<trash_path>  Where files will be put when they are deleted (default: ./Trash)
+
+examples:
+    python3 scripts/annotation_task_manager.py --project=vision_cat add /tmp/Trash/
 """
 
 import concurrent.futures

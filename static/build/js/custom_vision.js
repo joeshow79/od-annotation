@@ -6,8 +6,7 @@ $(function(){
     $('#total').text(sampleCount);
     loadSamplePic();
     $('#side_left').click(function(){
-        //$('#btn_save').click();
-        //loadSamplePic();
+		loadLastSample();
     });
     $('#side_right').click(function(){
 		strTagSelection= $("input[name='radio_region']:checked").val();
@@ -56,7 +55,8 @@ function get_labels(){
     $.ajax({
 		type : "GET",
 		dataType : "json",
-		url : "/api/annotation/labels?"+new Date(),
+		//TODO: TASK NAME: VISION
+		url : "/api/annotation/labels?task_name=vision&time="+Date.parse(new Date()),
 		beforeSend:function(){
 		},
 		success : function(result){
@@ -70,6 +70,9 @@ function get_labels(){
 		            if(index==0){
 		                html += '<label class="radio-inline"><input type="radio" name="radio_region" checked="checked" id="'+id+'" value="'+value+'">';
 		            }else{
+						if ( value == "-" ){
+							html +='<br/>
+						}
 		                html += '<label class="radio-inline"><input type="radio" name="radio_region" id="'+id+'" value="'+value+'">';
 		            }
 		            html += ' '+text+'</label>';
@@ -83,14 +86,35 @@ function get_labels(){
 	});
 }
 
+function loadLastSample(){
+	img_name = previous_img_name ;
+	if (img_name.replace(/(^\s*)|(\s*$)/g, "").length ==0){
+		layer.msg('没有上一张图像!');
+	}
+	else{
+		url = "/api/annotation/sample?time="+Date.parse(new Date())+"&img_name="+img_name ;
+		$('#img').attr({"src":url});
+		$('#total').html(sample_count);
+		$('#cur_id').html(img_name);
+		$('.box').remove();
+		$('#cur_loc').html('');
+	}
+		
+	//Resume to initial label status
+	$("input[name='radio_region']").eq(0).prop("checked",true);
+}
+
 function loadSamplePic(){
     $.ajax({
 		type : "GET",
 		dataType : "json",
-		url : "/api/annotation/next",
+		//TODO: TASK NAME
+		//url : "/api/annotation/next?task_name=vision",
+		url : "/api/annotation/next?task_name=vision&time="+Date.parse(new Date()),
 		beforeSend:function(){
 		},
 		success : function(result){
+			previous_img_name = img_name;
 			img_name = result['img_name'];
 			sample_count=result['sample_count'];
 			if (img_name.replace(/(^\s*)|(\s*$)/g, "").length ==0){
@@ -120,7 +144,8 @@ function saveRegionInfo(tagResult){
 		type : "POST",
 		dataType : "json",
 		url : "/api/annotation/save?"+new Date(),
-		data : {'tags':tagResult, 'img_name':img_name},
+		//TODO: TASK NAME
+		data : {'tags':tagResult, 'img_name':img_name,'task_name':'vision'},
 		beforeSend:function(){
 		},
 		success : function(result){

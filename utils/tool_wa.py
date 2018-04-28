@@ -85,8 +85,9 @@ def shutdown_service(pid_path):
     os.system(command)
 
 
-def get_labels():
-    label_file = codecs.open('annotation/label_config_vision.txt', mode='r', encoding='utf-8')
+def get_labels(task_name):
+    #label_file = codecs.open('annotation/label_config.txt', mode='r', encoding='utf-8')
+    label_file = codecs.open('annotation/'+task_name+'.txt', mode='r', encoding='utf-8')
     lines = label_file.readlines()
     label_file.close()
     labels = []
@@ -100,7 +101,6 @@ def get_labels():
         label['desc'] = label_desc
         labels.append(label)
     return labels
-
 
 def convert_to_voc2007(file_path='annotation/annotation.txt'):
     """转换标注数据为VOC2007格式"""
