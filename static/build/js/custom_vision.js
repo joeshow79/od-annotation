@@ -49,7 +49,82 @@ $(function(){
     $('#radio-type').click(function(){
         $(document).focus();
     });
+	$('#changeuser').attr("onclick","javascript:show_enterUserNameDIV(); return false;"); 
+    $('#userEnter').keypress(function(e){
+		if(e.keyCode == 13 || e.keyCode == 27){
+			change_and_display_user_name(e.keyCode)
+		}
+    });
+	init_user_name();
 });
+
+function show_enterUserNameDIV() {
+    // This function simply swaps the divs to show the "change_and_display_user_name" div
+    $("#display_user").hide();
+    $("#enterUserName").show();
+    // put the cursor inside the text box
+    document.getElementById('userEnter').focus();
+    document.getElementById('userEnter').select();
+
+    return false;
+}
+
+function change_and_display_user_name(c) {
+    // Shows the entered name.
+    // c is the key that produced getting out of the text box.
+    // only change the username is the user pressed "enter" -> c==13
+	if (c==13){
+        username = $("#userEnter").val();
+    
+        if (username.length==0) {
+            username = get_cookie("username");
+        }   
+    
+        set_cookie("username",username);
+        $("#usernametxt").text(username);
+		user_name=username;
+    }
+
+    $("#display_user").show();
+    $("#enterUserName").hide();
+}
+
+function init_user_name() {
+    // The first time we get the username will give preference to the username passed
+    //   in the URL as it might come from the LabelMe browser.
+
+	username = get_cookie("username");
+	if (!username || (username.length==0)) {
+		username = "anonymous";
+    }
+    
+    if (username=="null") {username = "anonymous";}
+    
+	user_name=username;
+    set_cookie("username",username);
+    $("#usernametxt").text(username);
+}
+
+function get_cookie(c_name) {
+  if (document.cookie.length>0) {
+    c_start=document.cookie.indexOf(c_name + "=");
+    if (c_start!=-1) {
+      c_start=c_start + c_name.length+1;
+      c_end=document.cookie.indexOf(";",c_start);
+      if (c_end==-1) c_end=document.cookie.length;
+      return unescape(document.cookie.substring(c_start,c_end));
+    }
+  }
+  return null
+}
+
+function set_cookie(c_name,value,expiredays) {
+  var exdate=new Date();
+  exdate.setDate(expiredays);
+  document.cookie=c_name+ "=" +escape(value)+
+    ((expiredays==null) ? "" : "; expires="+exdate);
+}
+
 
 function get_labels(){
     $.ajax({
@@ -151,7 +226,7 @@ function saveRegionInfo(tagResult){
 		dataType : "json",
 		url : "/api/annotation/save?"+new Date(),
 		//TODO: TASK NAME
-		data : {'tags':tagResult, 'img_name':img_name,'task_name':'vision'},
+		data : {'tags':tagResult, 'img_name':img_name,'task_name':'vision','user_name':user_name},
 		beforeSend:function(){
 		},
 		success : function(result){

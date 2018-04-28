@@ -135,6 +135,7 @@ def save_annotation():
         category= tags.strip()
 
     print("save....\n")
+    print(request)
     print(img_name)
     try:
         if mu.acquire(True):

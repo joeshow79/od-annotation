@@ -8,6 +8,7 @@ Usage:
     annotation_task_manager.py clear [--db=<db_path>] --project=<project_name>
     annotation_task_manager.py show [--db=<db_path>] --project=<project_name>
     annotation_task_manager.py find [--print] [--delete] [--match-time] [--trash=<trash_path>] [--db=<db_path>] --project=<project_name>
+    annotation_task_manager.py search [--db=<db_path>] --project=<project_name> [--owner=<owner>] [--category=<category>] [--sub_category=<sub_category>]
     annotation_task_manager.py -h | --help
 
 Options:
@@ -28,7 +29,27 @@ Options:
         --trash=<trash_path>  Where files will be put when they are deleted (default: ./Trash)
 
 examples:
+    1.Add the image files into the db
     python3 scripts/annotation_task_manager.py --project=vision_cat add /tmp/Trash/
+
+    2.Remove the image files from the db, image files will not be remove from disk
+    python3 scripts/annotation_task_manager.py --project=vision_cat remove /tmp/Trash/
+
+    3.Clear all the image files from the db,image files will not be remove from disk
+    python3 scripts/annotation_task_manager.py --project=vision_cat remove 
+
+    4.Show all the image files from the db
+    python3 scripts/annotation_task_manager.py --project=vision_cat show
+
+    5.Find all the DUPLICATE image files from the db and print
+    python3 scripts/annotation_task_manager.py --project=vision_cat find --print
+
+    6.Find all the DUPLICATE image files from the db and delete (the latest added duplicated images will be removed from disk), and the deleted images are stored in trash (default ./Trash)
+    python3 scripts/annotation_task_manager.py --project=vision_cat find --delete
+
+    7.Search the image files from the db according to the criteria specified
+    python3 scripts/annotation_task_manager.py search --project=vision_cat --owner=jasonj --category=blue_sky 
+
 """
 
 import concurrent.futures
@@ -52,7 +73,7 @@ from PIL import Image, ExifTags
 import pymongo
 from termcolor import cprint
 import datetime
-
+import codecs
 
 TRASH = "./Trash/"
 #DB_PATH = "mongodb://prcalc:27017/"
@@ -230,6 +251,36 @@ def show(db):
     print("Total: {}".format(total))
 
 
+def search(db,category='',owner=''):
+    criteria=dict()
+    if category.strip() != '' :
+        criteria['category'] = category
+
+    if owner.strip() != '':
+        criteria['owner'] = owner
+
+    query_output_file= 'query/'+category+'_'+owner+'_'+datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')+'.txt'
+    try:
+        if not os.path.exists(query_output_file):
+            file = codecs.open(query_output_file, mode='a+', encoding='utf-8')
+            file.close()
+        file = codecs.open(query_output_file, mode='a+', encoding='utf-8')
+
+        total = db.find(criteria).count()
+        for item in list(db.find(criteria)):
+            pprint(item)
+            file.write(item['_id']+" "+item['category']+'\n')
+
+        file.close()
+    except Exception as e:
+        print(e)
+        
+    total = db.find(criteria).count()
+    for item in list(db.find(criteria)):
+        pprint(item)
+    #pprint(list(db.find(criteria)))
+    print("Total: {}".format(total))
+
 def same_time(dup):
     items = dup['items']
     if "Time unknown" in items:
@@ -378,6 +429,14 @@ if __name__ == '__main__':
             clear(db)
         elif args['show']:
             show(db)
+        elif args['search']:
+            owner=''
+            category=''
+            if args['--owner']:
+                owner=args['--owner']
+            if args['--category']:
+                category=args['--category']
+            search(db,category,owner)
         elif args['find']:
             dups = find(db, args['--match-time'])
 
