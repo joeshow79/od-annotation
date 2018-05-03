@@ -30,25 +30,25 @@ Options:
 
 examples:
     1.Add the image files into the db
-    python3 scripts/annotation_task_manager.py --project=vision_cat add /tmp/Trash/
+    python3 scripts/annotation_task_manager.py --project=vision add /tmp/Trash/
 
     2.Remove the image files from the db, image files will not be remove from disk
-    python3 scripts/annotation_task_manager.py --project=vision_cat remove /tmp/Trash/
+    python3 scripts/annotation_task_manager.py --project=vision remove /tmp/Trash/
 
     3.Clear all the image files from the db,image files will not be remove from disk
-    python3 scripts/annotation_task_manager.py --project=vision_cat remove 
+    python3 scripts/annotation_task_manager.py --project=vision remove 
 
     4.Show all the image files from the db
-    python3 scripts/annotation_task_manager.py --project=vision_cat show
+    python3 scripts/annotation_task_manager.py --project=vision show
 
     5.Find all the DUPLICATE image files from the db and print
-    python3 scripts/annotation_task_manager.py --project=vision_cat find --print
+    python3 scripts/annotation_task_manager.py --project=vision find --print
 
     6.Find all the DUPLICATE image files from the db and delete (the latest added duplicated images will be removed from disk), and the deleted images are stored in trash (default ./Trash)
-    python3 scripts/annotation_task_manager.py --project=vision_cat find --delete
+    python3 scripts/annotation_task_manager.py --project=vision find --delete
 
     7.Search the image files from the db according to the criteria specified
-    python3 scripts/annotation_task_manager.py search --project=vision_cat --owner=jasonj --category=blue_sky 
+    python3 scripts/annotation_task_manager.py search --project=vision --owner=jasonj --category=blue_sky 
 
 """
 

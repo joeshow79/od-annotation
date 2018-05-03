@@ -7,7 +7,7 @@ nook:不合格图片
 beach-colorful_beach:彩色沙滩
 beach-mountain_beach:海滩+山/海岛
 beach-bluesky_beach:海滩+蓝天
-beach-other_beach:海滩+蓝天
+beach-other_beach:其他海滩
 -:-
 blue_sky-all_blue_sky:全屏蓝天
 blue_sky-cloud_blue_sky:蓝天白云
@@ -15,7 +15,7 @@ blue_sky-landscape_blue_sky:蓝天+风光
 blue_sky-object_blue_sky:蓝天+主体
 blue_sky-city_blue_sky:蓝天+城市
 blue_sky-backlight_blue_sky:蓝天+逆光
-blue_sky-other_blue_sky:其他
+blue_sky-other_blue_sky:其他蓝天
 -:-
 cat:猫
 -:-
