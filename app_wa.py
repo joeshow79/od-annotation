@@ -48,7 +48,6 @@ def route_template(template):
 # 读取类别标签
 @app.route('/api/annotation/labels', methods=['GET'])
 def get_labels():
-    print("label...\n")
     task_name=''
     if 'task_name' in request.args:
         task_name = request.args['task_name'] 
@@ -67,7 +66,6 @@ def show_user_profile(taskname):
 # 读取标注样本
 @app.route('/api/annotation/next', methods=['GET'])
 def get_next():
-    print("next...\n")
     img_name=""
     category=""
     task_name=""
@@ -91,7 +89,6 @@ def get_next():
             img_name = sample_to_label['_id']
             category = sample_to_label['category']
 
-    print(img_name)
 
     result = dict()
     result['img_name'] = img_name
@@ -104,9 +101,6 @@ def get_next():
 def get_sample():
     if 'img_name' in request.args:
         img_name = request.args['img_name'] 
-
-    print("sample....\n")
-    print(img_name)
 
     if img_name:
         logger.debug('Processing:' + str(img_name))
@@ -135,7 +129,6 @@ def save_annotation():
         category= tags.strip()
 
     print("save....\n")
-    print(request)
     print(img_name)
     try:
         if mu.acquire(True):
