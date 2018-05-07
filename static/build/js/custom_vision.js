@@ -20,6 +20,7 @@ $(function(){
 			loadSamplePic();
 		}
     });
+	/*
     $(document).keyup(function(event){
       if (event.keyCode === 37){//left
         $('#side_left').click();
@@ -33,7 +34,7 @@ $(function(){
             index = parseInt(indexStr);
             loadSamplePic();
         }
-    });
+    });*/
     $('#btn_save').click(function(){
         strTagSelection = '';
 		strTagSelection= $("input[name='radio_region']:checked").val();
