@@ -22,8 +22,8 @@ SAMPLE_FILE_PATH = '/src/portrait'  # 样本图片存放目录
 
 DB_PATH = "mongodb://localhost:27017/"
 #DB_HOST = "localhost"
-DB_HOST = "gallant_dijkstra"
+DB_HOST = "mongo"
 DB_PORT = "27017"
 DB_NAME = "image_label_database"
 
-PROJECT_NAME="vision_cat"
+PROJECT_NAME="vision"

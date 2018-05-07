@@ -274,10 +274,6 @@ def search(db,category='',owner=''): criteria=dict()
     except Exception as e:
         print(e)
         
-    total = db.find(criteria).count()
-    for item in list(db.find(criteria)):
-        pprint(item)
-    #pprint(list(db.find(criteria)))
     print("Total: {}".format(total))
 
 def same_time(dup):
