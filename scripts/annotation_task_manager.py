@@ -48,7 +48,7 @@ examples:
     python3 scripts/annotation_task_manager.py --project=vision find --delete
 
     7.Search the image files from the db according to the criteria specified
-    python3 scripts/annotation_task_manager.py search --project=vision --owner=jasonj --category=blue_sky 
+    python3 scripts/annotation_task_manager.py search --project=vision --category=blue_sky --owner=jasonj 
 
 """
 
@@ -251,8 +251,7 @@ def show(db):
     print("Total: {}".format(total))
 
 
-def search(db,category='',owner=''):
-    criteria=dict()
+def search(db,category='',owner=''): criteria=dict()
     if category.strip() != '' :
         criteria['category'] = category
 
