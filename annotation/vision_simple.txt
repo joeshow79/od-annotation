@@ -1,0 +1,25 @@
+# name: description
+#分割线-:-
+nolabel:未标注
+other:其他种类
+nook:不合格图片
+tbd:待进一步判断
+-:-
+beach:beach
+-:-
+blue_sky:blue sky
+-:-
+cat:cat
+-:-
+dog:dog
+-:-
+flower:flower
+-:-
+food:food
+-:-
+night:night
+-:-
+plant
+-:-
+text:text
+#END OF THE FILE
