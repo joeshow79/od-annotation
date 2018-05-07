@@ -139,13 +139,19 @@ def save_annotation():
     print(img_name)
     try:
         if mu.acquire(True):
-            #mongo.db[sys_config.PROJECT_NAME].save({"_id": img_name, 
-            mongo.db[task_name].save({"_id": img_name, 
+            mongo.db[task_name].update({"_id": img_name},{"$set":{
                        "category": category, 
                        "sub_category": sub_category,
                        "owner": user_name,
                        "status": 1,
-                       "finished_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
+                       "finished_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}})
+            #mongo.db[sys_config.PROJECT_NAME].save({"_id": img_name, 
+            #mongo.db[task_name].save({"_id": img_name, 
+            #           "category": category, 
+            #           "sub_category": sub_category,
+            #           "owner": user_name,
+            #           "status": 1,
+            #           "finished_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
             mu.release()
     except Exception as e:
         print(e)
