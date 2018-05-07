@@ -251,7 +251,8 @@ def show(db):
     print("Total: {}".format(total))
 
 
-def search(db,category='',owner=''): criteria=dict()
+def search(db,category='',owner=''): 
+    criteria=dict()
     if category.strip() != '' :
         criteria['category'] = category
 
