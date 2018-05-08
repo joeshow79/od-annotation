@@ -70,7 +70,6 @@ $(function(){
             return;
         }
 		current_label_selection = strTagSelection;
-		layer.msg("0");
         saveRegionInfo(strTagSelection);
     });
 
@@ -201,8 +200,8 @@ function loadSamplePic(){
 			previous_label_selection = current_label_selection ;
 			current_label_selection = result['category'];
 			sample_count=result['sample_count'];
-			owner_id=result['owner'];
-			label_time=result['finished_time']
+			//owner_id=result['owner'];
+			//label_time=result['finished_time']
 
 			if (img_name.replace(/(^\s*)|(\s*$)/g, "").length ==0){
 				layer.msg('没有更多图像!');
@@ -212,8 +211,8 @@ function loadSamplePic(){
 				$('#img').attr({"src":url});
 				$('#total').html(sample_count);
 				$('#cur_id').html(img_name);
-				$('#owner_id').html(owner_id);
-				$('#label_time').html(label_time);
+				//$('#owner_id').html(owner_id);
+				//$('#label_time').html(label_time);
 				$('.box').remove();
 				$('#cur_loc').html('');
 			}
@@ -227,7 +226,6 @@ function loadSamplePic(){
 }
 
 function saveRegionInfo(tagResult){
-	layer.msg("1");
     $.ajax({
 		type : "POST",
 		dataType : "json",
@@ -237,7 +235,6 @@ function saveRegionInfo(tagResult){
 		beforeSend:function(){
 		},
 		success : function(result){
-			layer.msg(result);
 			$('#cur_loc').html('');
 			loadSamplePic();
 		},
