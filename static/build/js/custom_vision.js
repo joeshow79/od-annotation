@@ -85,6 +85,18 @@ $(function(){
 		}
     });
 
+	document.onkeydown = function(e){  
+
+		var ev = document.all ? window.event : e;
+
+		if(ev.keyCode==13) {
+
+			// 如（ev.ctrlKey && ev.keyCode==13）为ctrl+Center 触发
+			//要处理的事件
+			$('#btn_save').click();
+		}
+	};
+
 	init_user_name();
 });
 
