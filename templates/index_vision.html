@@ -84,6 +84,13 @@
 			-->
         </div>
     </div>
+    <div class="row" style="text-align:left">
+        <div class="col-md-1"></div>
+        <div class="col-md-11">
+            <span>标注者：<strong id="owner_id"></strong></span>
+            <span>标注时间：<strong id="label_time"></strong></span>
+        </div>
+    </div>
     <div class="row" style="text-align:center">
         <div class="col-md-12">
             <button class="btn btn-default" id="btn_save" type="button">保存</button>
@@ -125,6 +132,8 @@
   var sample_count = "";
   var img_name= "";
   var previous_img_name = "";
+  var current_label_selection = "";
+  var previous_label_selection = "";
   var user_name="";
 </script>
 </body>

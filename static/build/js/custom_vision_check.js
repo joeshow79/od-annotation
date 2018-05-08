@@ -34,7 +34,7 @@ $(function(){
 	})
 
     $('#total').text(sampleCount);
-    
+
 
     $('#side_left').click(function(){
 		loadLastSample();
@@ -53,10 +53,7 @@ $(function(){
             return;
         }
 		else{
-			//$('#btn_save').click();
 			$('#btn_save').click();
-
-			//loadSamplePic();
 		}
     });
 
@@ -238,7 +235,6 @@ function saveRegionInfo(tagResult){
 		beforeSend:function(){
 		},
 		success : function(result){
-		    //layer.msg(result.message);
 			$('#cur_loc').html('');
 			loadSamplePic();
 		},

@@ -19,7 +19,7 @@ food:food
 -:-
 night:night
 -:-
-plant
+plant:plant
 -:-
 text:text
 #END OF THE FILE

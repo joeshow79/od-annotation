@@ -3,59 +3,89 @@
 */
 sampleCount = 0;
 $(function(){
+    get_labels().then(function (result) {
+	    if(result.message=='success'){
+	        var html = '标注类型：';
+	        index = 0;
+	        for (var i in result.data){
+	            var id = 'region_'+result.data[i].name;
+	            var value = result.data[i].name;
+	            var text = result.data[i].desc;
+	            if(index==0){
+					html += '<div class="row" style="text-align:left">';
+	                html += '<label class="radio-inline"><input type="radio" name="radio_region" id="'+id+'" value="'+value+'">';
+	            }else{
+					if ( value == "-" ){
+						html+='</div>' 
+						html += '<div class="row" style="text-align:left">';
+					}
+					else{
+						html += '<label class="radio-inline"><input type="radio" name="radio_region" id="'+id+'" value="'+value+'">';
+					}
+	            }
+				if ( value != "-" ){
+					html += ' '+text+'</label>';
+					index++;
+				}
+	        }
+            $('#radio-type').html(html);
+		    loadSamplePic();
+	    }
+	})
+
     $('#total').text(sampleCount);
-    loadSamplePic();
+
+
     $('#side_left').click(function(){
 		loadLastSample();
     });
+
     $('#side_right').click(function(){
+
+		if(user_name == '' || user_name == 'anonymous'){
+            layer.msg('请先登录!');
+            return;
+		}
+
 		strTagSelection= $("input[name='radio_region']:checked").val();
-        if (strTagSelection == 'nolabel' || strTagSelection == ''){
+        if (strTagSelection == 'nolabel' || strTagSelection == '' || strTagSelection == undefined){
             layer.msg('请先进行标注!');
             return;
         }
 		else{
 			$('#btn_save').click();
-
-			loadSamplePic();
 		}
     });
-	/*
-    $(document).keyup(function(event){
-      if (event.keyCode === 37){//left
-        $('#side_left').click();
-      }else if(event.keyCode === 39){//right
-        $('#side_right').click();
-      }
-    });
-    $('#jump_page').keypress(function(e){
-        if(e.keyCode==13){
-            var indexStr = $(this).val();
-            index = parseInt(indexStr);
-            loadSamplePic();
-        }
-    });*/
+
     $('#btn_save').click(function(){
+		if(user_name == '' || user_name == 'anonymous'){
+            layer.msg('请先登录!');
+            return;
+		}
+
         strTagSelection = '';
 		strTagSelection= $("input[name='radio_region']:checked").val();
-        if (strTagSelection == 'nolabel' || strTagSelection == ''){
+        if (strTagSelection == 'nolabel' || strTagSelection == '' || strTagSelection == undefined){
             layer.msg('请先进行标注');
             return;
         }
+		current_label_selection = strTagSelection;
+		layer.msg("0");
         saveRegionInfo(strTagSelection);
-        $('#cur_loc').html('');
-		//jasonj
     });
-    get_labels();
+
     $('#radio-type').click(function(){
         $(document).focus();
     });
+
 	$('#changeuser').attr("onclick","javascript:show_enterUserNameDIV(); return false;"); 
+
     $('#userEnter').keypress(function(e){
 		if(e.keyCode == 13 || e.keyCode == 27){
 			change_and_display_user_name(e.keyCode)
 		}
     });
+
 	init_user_name();
 });
 
@@ -128,48 +158,18 @@ function set_cookie(c_name,value,expiredays) {
 
 
 function get_labels(){
-    $.ajax({
+    return $.ajax({
 		type : "GET",
 		dataType : "json",
 		//TODO: TASK NAME: VISION
 		url : "/api/annotation/labels?task_name=vision&time="+Date.parse(new Date()),
-		beforeSend:function(){
-		},
-		success : function(result){
-		    if(result.message=='success'){
-		        var html = '标注类型：';
-		        index = 0;
-		        for (var i in result.data){
-		            var id = 'region_'+result.data[i].name;
-		            var value = result.data[i].name;
-		            var text = result.data[i].desc;
-		            if(index==0){
-						html += '<div class="row" style="text-align:left">';
-		                html += '<label class="radio-inline"><input type="radio" name="radio_region" checked="checked" id="'+id+'" value="'+value+'">';
-		            }else{
-						if ( value == "-" ){
-							html+='</div>' 
-							html += '<div class="row" style="text-align:left">';
-						}
-						else{
-							html += '<label class="radio-inline"><input type="radio" name="radio_region" id="'+id+'" value="'+value+'">';
-						}
-		            }
-					if ( value != "-" ){
-						html += ' '+text+'</label>';
-						index++;
-					}
-		        }
-                $('#radio-type').html(html);
-		    }
-		},
-		error: function(){
-		}
-	});
+	})
 }
 
 function loadLastSample(){
 	img_name = previous_img_name ;
+	current_label_selection = previous_label_selection;
+
 	if (img_name.replace(/(^\s*)|(\s*$)/g, "").length ==0){
 		layer.msg('没有上一张图像!');
 	}
@@ -183,7 +183,8 @@ function loadLastSample(){
 	}
 		
 	//Resume to initial label status
-	$("input[name='radio_region']").eq(0).prop("checked",true);
+	$(":radio[name='radio_region'][value='" + current_label_selection + "']").prop("checked", "checked");
+
 }
 
 function loadSamplePic(){
@@ -191,29 +192,33 @@ function loadSamplePic(){
 		type : "GET",
 		dataType : "json",
 		//TODO: TASK NAME
-		//url : "/api/annotation/next?task_name=vision",
 		url : "/api/annotation/next?task_name=vision&time="+Date.parse(new Date()),
 		beforeSend:function(){
 		},
 		success : function(result){
 			previous_img_name = img_name;
 			img_name = result['img_name'];
+			previous_label_selection = current_label_selection ;
+			current_label_selection = result['category'];
 			sample_count=result['sample_count'];
+			owner_id=result['owner'];
+			label_time=result['finished_time']
+
 			if (img_name.replace(/(^\s*)|(\s*$)/g, "").length ==0){
 				layer.msg('没有更多图像!');
 			}
 			else{
-			url = "/api/annotation/sample?time="+Date.parse(new Date())+"&img_name="+img_name ;
-			$('#img').attr({"src":url});
-			$('#total').html(sample_count);
-			$('#cur_id').html(img_name);
-			$('.box').remove();
-			$('#cur_loc').html('');
+				url = "/api/annotation/sample?time="+Date.parse(new Date())+"&img_name="+img_name ;
+				$('#img').attr({"src":url});
+				$('#total').html(sample_count);
+				$('#cur_id').html(img_name);
+				$('#owner_id').html(owner_id);
+				$('#label_time').html(label_time);
+				$('.box').remove();
+				$('#cur_loc').html('');
 			}
 		
-			//Resume to initial label status
-			$("input[name='radio_region']").eq(0).prop("checked",true);
-
+			$(":radio[name='radio_region'][value='" + current_label_selection + "']").prop("checked", true);
 		},
 		error: function(){
 		}
@@ -222,16 +227,19 @@ function loadSamplePic(){
 }
 
 function saveRegionInfo(tagResult){
+	layer.msg("1");
     $.ajax({
 		type : "POST",
 		dataType : "json",
-		url : "/api/annotation/save?"+new Date(),
+		url : "/api/annotation/save?"+new Date(), 
 		//TODO: TASK NAME
 		data : {'tags':tagResult, 'img_name':img_name,'task_name':'vision','user_name':user_name},
 		beforeSend:function(){
 		},
 		success : function(result){
-		    //layer.msg(result.message);
+			layer.msg(result);
+			$('#cur_loc').html('');
+			loadSamplePic();
 		},
 		error: function(){
 		}
