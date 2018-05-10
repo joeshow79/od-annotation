@@ -268,7 +268,8 @@ def search(db,category='',owner=''):
 
         total = db.find(criteria).count()
         for item in list(db.find(criteria)):
-            pprint(item)
+            #TODO: known bug, crash if there is wrong encoding character in fields(e.g capture time), so comment out the pprint
+            #pprint(item)
             file.write(item['_id']+" "+item['category']+'\n')
 
         file.close()
