@@ -9,6 +9,7 @@ Usage:
     annotation_task_manager.py show [--db=<db_path>] --project=<project_name>
     annotation_task_manager.py find [--print] [--delete] [--match-time] [--trash=<trash_path>] [--db=<db_path>] --project=<project_name>
     annotation_task_manager.py search [--db=<db_path>] --project=<project_name> [--owner=<owner>] [--category=<category>] [--sub_category=<sub_category>]
+    annotation_task_manager.py categorize [--db=<db_path>] [--archive] --project=<project_name> 
     annotation_task_manager.py -h | --help
 
 Options:
@@ -50,6 +51,8 @@ examples:
     7.Search the image files from the db according to the criteria specified
     python3 scripts/annotation_task_manager.py search --project=vision --category=blue_sky --owner=jasonj 
 
+    8. Categorize all the sample 
+    python3 scripts/annotation_task_manager.py categorize --project=vision 
 """
 
 import concurrent.futures
@@ -74,6 +77,7 @@ import pymongo
 from termcolor import cprint
 import datetime
 import codecs
+import shutil
 
 TRASH = "./Trash/"
 #DB_PATH = "mongodb://prcalc:27017/"
@@ -250,6 +254,35 @@ def show(db):
     pprint(list(db.find()))
     print("Total: {}".format(total))
 
+def archive_category(samples):
+    try:
+        os.mkdir("./archive");
+        for list_item in samples:
+            print("id:",list_item["_id"])
+            target_dir="./archive/"+list_item["_id"]+"/"
+            os.mkdir(target_dir)
+                
+            for sub_item in list_item["items"]:
+                for it,value in sub_item.items():
+                    shutil.copy(value,target_dir+"./")
+    except Exception as e:
+        print(e)
+
+    pass
+
+
+def categorize(db):
+    dups = db.aggregate([{
+        "$group": {
+            "_id": "$category",
+            "items": {
+                "$push": {
+                    "file_name": "$_id"
+                }
+            }
+        }
+    }])
+    return list(dups)
 
 def search(db,category='',owner=''): 
     criteria=dict()
@@ -426,6 +459,14 @@ if __name__ == '__main__':
             clear(db)
         elif args['show']:
             show(db)
+        elif args['categorize']:
+            dups=categorize(db)
+
+            if args['--archive']:
+                archive_category(dups)
+            else: 
+                pprint(dups)
+
         elif args['search']:
             owner=''
             category=''
