@@ -114,7 +114,7 @@ def get_checknext():
     #random selection
     if sample_count > 10:
         #cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1,'category':1}).limit(10)
-        cursor=mongo.db[task_name].find({'status': 1},{'_id':1,'category':1,'owner':1,'finished_time':1}).limit(10)
+        cursor=mongo.db[task_name].find({'status': 1},{'_id':1,'category':1,'owner':1,'finished_time':1}).limit(20)
         cursor.skip(random.randint(0,9))
         sample_to_label = next(cursor, None)
         img_name = sample_to_label['_id']
@@ -139,6 +139,47 @@ def get_checknext():
     return jsonify(result)
 
 # 读取标注样本
+@app.route('/api/annotation/auditnext', methods=['GET'])
+def get_auditnext():
+    img_name=""
+    category=""
+    task_name=""
+    owner=""
+    finished_time=""
+
+    if 'task_name' in request.args:
+        task_name = request.args['task_name'] 
+
+    #sample_count=mongo.db[sys_config.PROJECT_NAME].find({'status': -1}).count()
+    sample_count=mongo.db[task_name].find({'status': 2}).count()
+
+    #random selection
+    if sample_count > 10:
+        #cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1,'category':1}).limit(10)
+        cursor=mongo.db[task_name].find({'status': 2},{'_id':1,'checked_category':1,'examiner':1,'checked_time':1}).limit(100)
+        cursor.skip(random.randint(0,9))
+        sample_to_label = next(cursor, None)
+        img_name = sample_to_label['_id']
+        category = sample_to_label['checked_category']
+        owner = sample_to_label['examiner']
+        finished_time = sample_to_label['checked_time']
+    else:
+        #for sample_to_label in mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1,'category':1}).limit(1):
+        for sample_to_label in mongo.db[task_name].find({'status': 2},{'_id':1,'checked_category':1,'examiner':1,'checked_time':1}).limit(1):
+            img_name = sample_to_label['_id']
+            category = sample_to_label['checked_category']
+            owner = sample_to_label['examiner']
+            finished_time = sample_to_label['checked_time']
+
+
+    result = dict()
+    result['img_name'] = img_name
+    result['sample_count'] = sample_count 
+    result['category'] = category
+    result['owner'] = owner
+    result['finished_time'] = finished_time
+    return jsonify(result)
+# 读取标注样本
 @app.route('/api/annotation/sample', methods=['GET'])
 def get_sample():
     if 'img_name' in request.args:
@@ -151,6 +192,30 @@ def get_sample():
         result = dict()
         result['message'] = 'failure'
         return jsonify(result)
+
+# 标注接口
+@app.route('/api/annotation/auditsave', methods=['POST'])
+def auditsave_annotation():
+    print(request.form)
+    img_name = request.form['img_name'] 
+    task_name = request.form['task_name'] 
+    user_name = request.form['user_name'] 
+    #tags = request.form['tags']
+    category=""
+    sub_category=""
+
+    print("auditsave....\n")
+    print(img_name)
+    try:
+        if mu.acquire(True):
+            mongo.db[task_name].update({"_id": img_name},{"$set":{
+                       "status": 1 }})
+            mu.release()
+    except Exception as e:
+        print(e)
+    result = dict()
+    result['message'] = 'success'
+    return jsonify(result)
 
 
 # 标注接口
