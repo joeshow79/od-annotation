@@ -41,13 +41,7 @@ $(function(){
     });
 
     $('#side_right').click(function(){
-
-		if(user_name == '' || user_name == 'anonymous'){
-            layer.msg('请先登录!');
-            return;
-		}
-
-        saveRegionInfo("");
+		loadSamplePic();
     });
 
     $('#btn_save').click(function(){
@@ -56,14 +50,7 @@ $(function(){
             return;
 		}
 
-        strTagSelection = '';
-		strTagSelection= $("input[name='radio_region']:checked").val();
-        if (strTagSelection == 'nolabel' || strTagSelection == '' || strTagSelection == undefined){
-            layer.msg('请先进行标注');
-            return;
-        }
-		current_label_selection = strTagSelection;
-        saveRegionInfo(strTagSelection);
+        saveRegionInfo("");
     });
 
     $('#radio-type').click(function(){
