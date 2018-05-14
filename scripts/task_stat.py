@@ -3,7 +3,7 @@
 A tool to do the statistic for each day
 
 Usage:
-    task_stat.py stat [--db=<db_path>] --project=<project_name> [--since=<since time>]
+    task_stat.py stat [--db=<db_path>] --project=<project_name> [--since=<since time>] [--status=<1 2>]
     task_stat.py -h | --help
 
 Options:
@@ -50,6 +50,7 @@ TRASH = "./Trash/"
 DB_PATH = "mongodb://localhost:27017/"
 NUM_PROCESSES = psutil.cpu_count()
 SINCE_TIME =  "1970-01-01 00:00:00"
+STATUS=1
 
 @contextmanager
 def connect_to_db(db_conn_string,col):
@@ -110,6 +111,22 @@ def stat(db,since):
 
     pprint(list(dups))
 
+def stat2(db,since):
+    dups = db.aggregate([
+        {
+        "$match": {
+            "status":2,"checked_time": {"$gt": since}
+            }
+        },
+        {
+        "$group": {
+            "_id": "$examiner",
+            "total": {"$sum": 1},
+            }
+        }
+    ])
+
+    pprint(list(dups))
 
 if __name__ == '__main__':
     from docopt import docopt
@@ -124,10 +141,17 @@ if __name__ == '__main__':
     if args['--since']:
         SINCE_TIME=args['--since']
 
+    if args['--status']:
+        STATUS=args['--status']
+
     cprint("[IMPORTANT!] Connect to DB: "+DB_PATH, "green")
     cprint("[IMPORTANT!] Connect to project: "+PROJECT_NAME, "green")
     cprint("[IMPORTANT!] Since: "+SINCE_TIME, "green")
 
     with connect_to_db(db_conn_string=DB_PATH,col=PROJECT_NAME) as db:
         if args['stat']:
-            stat(db,SINCE_TIME)
+            if STATUS == 1:
+                stat(db,SINCE_TIME)
+            else:
+                if STATUS == 2:
+                    stat2(db,SINCE_TIME)
