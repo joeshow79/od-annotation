@@ -112,10 +112,10 @@ def get_checknext():
     sample_count=mongo.db[task_name].find({'status': 1}).count()
 
     #random selection
-    if sample_count > 10:
+    if sample_count > 20:
         #cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1,'category':1}).limit(10)
         cursor=mongo.db[task_name].find({'status': 1},{'_id':1,'category':1,'owner':1,'finished_time':1}).limit(20)
-        cursor.skip(random.randint(0,9))
+        cursor.skip(random.randint(0,19))
         sample_to_label = next(cursor, None)
         img_name = sample_to_label['_id']
         category = sample_to_label['category']
@@ -156,8 +156,8 @@ def get_auditnext():
     #random selection
     if sample_count > 10:
         #cursor=mongo.db[sys_config.PROJECT_NAME].find({'status': -1},{'_id':1,'category':1}).limit(10)
-        cursor=mongo.db[task_name].find({'status': 2},{'_id':1,'checked_category':1,'examiner':1,'checked_time':1}).limit(100)
-        cursor.skip(random.randint(0,9))
+        cursor=mongo.db[task_name].find({'status': 2},{'_id':1,'checked_category':1,'examiner':1,'checked_time':1})
+        cursor.skip(random.randint(0,sample_count-1))
         sample_to_label = next(cursor, None)
         img_name = sample_to_label['_id']
         category = sample_to_label['checked_category']

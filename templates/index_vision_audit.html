@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>目标检测数据集标注工具</title>
+    <title>VISION数据核查工具</title>
     <link type="favicon" rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
     <!-- Bootstrap -->
     <link href="/static/build/js/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -30,6 +30,10 @@
 		<!-- USERNAME FORM-->
 		<div id="username_main_div">
 		<div id="display_user" style="display:block;">
+			<div class="row" style="text-align:center">
+			<b><span id="taskname" type="text" style="max-height:120px; height:1.2em;" tabindex="0" title="username">数据核查中...
+			</span></b>
+			</div>
 			You are:
 			<b><span id="usernametxt" type="text" style="max-width:120px; height:1.2em;" tabindex="0" title="username">anonymous
 			</span></b>
@@ -53,7 +57,7 @@
         <div class="col-md-10 img-main" id="img">&nbsp;</div>
 		-->
         <div class="col-md-10 img-main" >
-			<img id="img" style="max-height:480px" />
+			<img id="img" style="max-height:360px" />
 			<!--img id="img" style="max-height:360;max-width:640" /-->
 		</div>
 		<!--
